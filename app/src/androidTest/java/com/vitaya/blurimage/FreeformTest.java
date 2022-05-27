@@ -14,12 +14,13 @@ import android.graphics.Point;
 
 import androidx.test.rule.ActivityTestRule;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 
 public class FreeformTest {
@@ -28,7 +29,7 @@ public class FreeformTest {
             new ActivityTestRule<>(Editor.class, false, false);
 
     @Before
-    public void before() throws InterruptedException {
+    public void before(){
         Intent i = new Intent();
         String path = "android.resource://com.vitaya.blurimage/" + R.raw.white;
         assertNotNull(path);
@@ -40,81 +41,47 @@ public class FreeformTest {
         onView(withId(R.id.black)).perform(click());
     }
 
+    private void testFigure(int expectedId, List<Point> arr) {
+        Deque<Point> deque = new ArrayDeque<>(arr);
+        Point tmp;
+        for (int i = 0; i < arr.size(); i++) {
+            onView(withId(R.id.imageView)).perform(touchDownAndUp(expectedId, deque))
+                    .check(matches(withDrawable(expectedId)));
+            onView(withId(R.id.undo)).perform(click());
+            tmp = deque.getFirst();
+            deque.removeFirst();
+            deque.addLast(tmp);
+        }
+    }
 
     @Test
     public void squareTest() {
         //координаты в системе координа итогового изображения
-        Point p1 = new Point(64, 64);
-        Point p2 = new Point(64, 192);
-        Point p3 = new Point(192, 192);
-        Point p4 = new Point(192, 64);
-
-        onView(withId(R.id.imageView)).perform(touchDownAndUp(R.raw.square, p1, p2, p3, p4))
-                .check(matches(withDrawable(R.raw.square)));
-        onView(withId(R.id.undo)).perform(click());
-
-        onView(withId(R.id.imageView)).perform(touchDownAndUp(R.raw.square, p2, p3, p4, p1))
-                .check(matches(withDrawable(R.raw.square)));
-        ;
-        onView(withId(R.id.undo)).perform(click());
-
-        onView(withId(R.id.imageView)).perform(touchDownAndUp(R.raw.square, p3, p4, p1, p2))
-                .check(matches(withDrawable(R.raw.square)));
-        ;
-        onView(withId(R.id.undo)).perform(click());
-
-        onView(withId(R.id.imageView)).perform(touchDownAndUp(R.raw.square, p4, p1, p2, p3))
-                .check(matches(withDrawable(R.raw.square)));
-        ;
-        onView(withId(R.id.undo)).perform(click());
+        List<Point> arr = new ArrayList<>();
+        arr.add(new Point(64, 64));
+        arr.add(new Point(64, 192));
+        arr.add(new Point(192, 192));
+        arr.add(new Point(192, 64));
+        testFigure(R.raw.square, arr);
     }
 
     @Test
     public void triangleTest() {
-        Point p1 = new Point(128, 64);
-        Point p2 = new Point(64, 192);
-        Point p3 = new Point(192, 192);
-
-        onView(withId(R.id.imageView)).perform(touchDownAndUp(R.raw.square, p1, p2, p3))
-                .check(matches(withDrawable(R.raw.triangle)));
-        onView(withId(R.id.undo)).perform(click());
-
-        onView(withId(R.id.imageView)).perform(touchDownAndUp(R.raw.square, p2, p3, p1))
-                .check(matches(withDrawable(R.raw.triangle)));
-        onView(withId(R.id.undo)).perform(click());
-
-        onView(withId(R.id.imageView)).perform(touchDownAndUp(R.raw.square, p3, p1, p2))
-                .check(matches(withDrawable(R.raw.triangle)));
-        onView(withId(R.id.undo)).perform(click());
+        List<Point> arr = new ArrayList<>();
+        arr.add(new Point(128, 64));
+        arr.add(new Point(64, 192));
+        arr.add(new Point(192, 192));
+        testFigure(R.raw.triangle, arr);
     }
 
     @Test
     public void starTest() {
-        Point p1 = new Point(64, 64);
-        Point p2 = new Point(192, 64);
-        Point p3 = new Point(64, 192);
-        Point p4 = new Point(128, 32);
-        Point p5 = new Point(192, 192);
-
-        onView(withId(R.id.imageView)).perform(touchDownAndUp(R.raw.square, p1, p2, p3, p4, p5))
-                .check(matches(withDrawable(R.raw.star)));
-        onView(withId(R.id.undo)).perform(click());
-
-        onView(withId(R.id.imageView)).perform(touchDownAndUp(R.raw.square, p2, p3, p4, p5, p1))
-                .check(matches(withDrawable(R.raw.star)));
-        onView(withId(R.id.undo)).perform(click());
-
-        onView(withId(R.id.imageView)).perform(touchDownAndUp(R.raw.square, p3, p4, p5, p1, p2))
-                .check(matches(withDrawable(R.raw.star)));
-        onView(withId(R.id.undo)).perform(click());
-
-        onView(withId(R.id.imageView)).perform(touchDownAndUp(R.raw.square, p4, p5, p1, p2, p3))
-                .check(matches(withDrawable(R.raw.star)));
-        onView(withId(R.id.undo)).perform(click());
-
-        onView(withId(R.id.imageView)).perform(touchDownAndUp(R.raw.square, p5, p1, p2, p3, p4))
-                .check(matches(withDrawable(R.raw.star)));
-        onView(withId(R.id.undo)).perform(click());
-
+        List<Point> arr = new ArrayList<>();
+        arr.add(new Point(64, 64));
+        arr.add(new Point(192, 64));
+        arr.add(new Point(64, 192));
+        arr.add(new Point(128, 32));
+        arr.add(new Point(192, 192));
+        testFigure(R.raw.star, arr);
     }
 }

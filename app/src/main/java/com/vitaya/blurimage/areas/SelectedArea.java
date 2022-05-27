@@ -78,6 +78,8 @@ public abstract class SelectedArea {
         r.height = Math.min(r.y + r.height, mat.rows()) - r.y;
         r.x = Math.max(r.x, 0);
         r.y = Math.max(r.y, 0);
+        if (r.height == 0 || r.width == 0)
+            return;
         switch (selectedMethod) {
             case 0:
                 gaussianTouchEvent(r, mat);

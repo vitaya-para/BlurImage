@@ -22,6 +22,7 @@ import androidx.test.espresso.action.Tap;
 import org.hamcrest.Matcher;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -76,7 +77,7 @@ public class EspressoTestActions {
                 Press.FINGER);
     }
 
-    public static ViewAction touchDownAndUp(int expectedId, Point... list) {
+    public static ViewAction touchDownAndUp(int expectedId, Collection<Point> list) {
         return new ViewAction() {
             @Override
             public Matcher<View> getConstraints() {
@@ -98,7 +99,7 @@ public class EspressoTestActions {
                 double k = (double) view.getHeight() /
                 ((BitmapDrawable) view.getContext().getResources().getDrawable(expectedId)).getBitmap().getHeight();
                 // Offset coordinates by view position
-                Point begin = Arrays.stream(list).iterator().next();
+                Point begin = list.iterator().next();
                 float[] coordinates= new float[]{(int)(begin.x* k) + location[0], (int)(begin.y* k) + location[1]};
                 float[] precision = new float[]{1f, 1f};
 
